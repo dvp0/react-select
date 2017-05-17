@@ -82,13 +82,29 @@ const Value = createClass({
 		);
 	},
 
+	shouldShowRemoveIcon () {
+		if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
+			return false;
+		}
+		return true;
+	},
+
+    getCustomClass () {
+		const type = this.props.value.type;
+		if (type && type === '_bracket_') {
+			return "Select-value-bracket";
+		} else if (type && type === '_operator_') {
+            return "Select-value-operator";
+        }
+	},
+
 	render () {
 		return (
-			<div className={classNames('Select-value', this.props.value.className)}
+			<div className={classNames('Select-value', this.props.value.className, this.getCustomClass())}
 				style={this.props.value.style}
 				title={this.props.value.title}
 				>
-				{this.renderRemoveIcon()}
+				{this.shouldShowRemoveIcon() && this.renderRemoveIcon()}
 				{this.renderLabel()}
 			</div>
 		);

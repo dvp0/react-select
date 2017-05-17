@@ -17,19 +17,24 @@ import States from './components/States';
 
 ReactDOM.render(
 	<div>
-		<States label="States" searchable />
-		<Multiselect label="Multiselect" />
-		<Virtualized label="Virtualized" />
-		<Contributors label="Contributors (Async)" />
-		<GithubUsers label="Github users (Async with fetch.js)" />
-		<NumericSelect label="Numeric Values" />
-		<BooleanSelect label="Boolean Values" />
-		<CustomRender label="Custom Render Methods"/>
-		<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />
-		<Creatable
-			hint="Enter a value that's NOT in the list, then hit return"
-			label="Custom tag creation"
-		/>
+		<div style={{float: "left"}}>
+			<States label="States" searchable />
+		</div>
+		{/*<Multiselect label="Multiselect" />*/}
+		{/*<Virtualized label="Virtualized" />*/}
+		{/*<Contributors label="Contributors (Async)" />*/}
+		{/*<GithubUsers label="Github users (Async with fetch.js)" />*/}
+		{/*<NumericSelect label="Numeric Values" />*/}
+		{/*<BooleanSelect label="Boolean Values" />*/}
+		{/*<CustomRender label="Custom Render Methods"/>*/}
+		{/*<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />*/}
+		<div style={{float: "right"}}>
+			<Creatable
+				hint="Enter a value that's NOT in the list, then hit return"
+				label="Custom tag creation"
+			/>
+		</div>
+		<div style={{clear: "both"}}></div>
 	</div>,
 	document.getElementById('example')
 );

@@ -53,7 +53,6 @@ var StatesField = createClass({
 		return (
 			<div className="section">
 				<h3 className="section-heading">{this.props.label}</h3>
-				<Select ref="stateSelect" autofocus options={options} simpleValue clearable={this.state.clearable} name="selected-state" disabled={this.state.disabled} value={this.state.selectValue} onChange={this.updateValue} searchable={this.state.searchable} />
 
 				<div style={{ marginTop: 14 }}>
 					<button type="button" onClick={this.focusStateSelect}>Focus Select</button>
@@ -80,6 +79,24 @@ var StatesField = createClass({
 						<span className="checkbox-label">United States</span>
 					</label>
 				</div>
+
+
+				<Select
+					options={[
+                        {value: '_(_', label: '(', type: '_bracket_'},
+                        {value: '_)_', label: ')', type: '_bracket_'},
+                        {value: '_AND_', label: '&&', type: '_operator_'},
+                        {value: '_OR_', label: '||', type: '_operator_'}
+                    ].concat(options)}
+					multi
+					onChange={this.updateValue}
+					value={this.state.selectValue}
+					isOptionUnique={e => true}
+				/>
+
+				<br/>
+				<br/>
+
 			</div>
 		);
 	}

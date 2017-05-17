@@ -60,20 +60,22 @@ var _componentsStates2 = _interopRequireDefault(_componentsStates);
 _reactDom2['default'].render(_react2['default'].createElement(
 	'div',
 	null,
-	_react2['default'].createElement(_componentsStates2['default'], { label: 'States', searchable: true }),
-	_react2['default'].createElement(_componentsMultiselect2['default'], { label: 'Multiselect' }),
-	_react2['default'].createElement(_componentsVirtualized2['default'], { label: 'Virtualized' }),
-	_react2['default'].createElement(_componentsContributors2['default'], { label: 'Contributors (Async)' }),
-	_react2['default'].createElement(_componentsGithubUsers2['default'], { label: 'Github users (Async with fetch.js)' }),
-	_react2['default'].createElement(_componentsNumericSelect2['default'], { label: 'Numeric Values' }),
-	_react2['default'].createElement(_componentsBooleanSelect2['default'], { label: 'Boolean Values' }),
-	_react2['default'].createElement(_componentsCustomRender2['default'], { label: 'Custom Render Methods' }),
-	_react2['default'].createElement(_componentsCustomComponents2['default'], { label: 'Custom Placeholder, Option, Value, and Arrow Components' }),
-	_react2['default'].createElement(_componentsCreatable2['default'], {
-		hint: 'Enter a value that\'s NOT in the list, then hit return',
-		label: 'Custom tag creation'
-	})
+	_react2['default'].createElement(
+		'div',
+		{ style: { float: "left" } },
+		_react2['default'].createElement(_componentsStates2['default'], { label: 'States', searchable: true })
+	),
+	_react2['default'].createElement(
+		'div',
+		{ style: { float: "right" } },
+		_react2['default'].createElement(_componentsCreatable2['default'], {
+			hint: 'Enter a value that\'s NOT in the list, then hit return',
+			label: 'Custom tag creation'
+		})
+	),
+	_react2['default'].createElement('div', { style: { clear: "both" } })
 ), document.getElementById('example'));
+/*<Multiselect label="Multiselect" />*/ /*<Virtualized label="Virtualized" />*/ /*<Contributors label="Contributors (Async)" />*/ /*<GithubUsers label="Github users (Async with fetch.js)" />*/ /*<NumericSelect label="Numeric Values" />*/ /*<BooleanSelect label="Boolean Values" />*/ /*<CustomRender label="Custom Render Methods"/>*/ /*<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />*/
 
 },{"./components/BooleanSelect":2,"./components/Contributors":3,"./components/Creatable":4,"./components/CustomComponents":5,"./components/CustomRender":6,"./components/GithubUsers":7,"./components/Multiselect":8,"./components/NumericSelect":9,"./components/States":10,"./components/Virtualized":11,"react":undefined,"react-dom":undefined,"react-select":undefined}],2:[function(require,module,exports){
 'use strict';
@@ -312,12 +314,6 @@ var CreatableDemo = (0, _createReactClass2['default'])({
 				{ className: 'section-heading' },
 				this.props.label
 			),
-			_react2['default'].createElement(_reactSelect2['default'].Creatable, {
-				multi: multi,
-				options: options,
-				onChange: this.handleOnChange,
-				value: multi ? multiValue : value
-			}),
 			_react2['default'].createElement(
 				'div',
 				{ className: 'hint' },
@@ -360,7 +356,13 @@ var CreatableDemo = (0, _createReactClass2['default'])({
 						'Single Value'
 					)
 				)
-			)
+			),
+			_react2['default'].createElement(_reactSelect2['default'].Creatable, {
+				multi: multi,
+				options: options,
+				onChange: this.handleOnChange,
+				value: multi ? multiValue : value
+			})
 		);
 	}
 });
@@ -1069,7 +1071,6 @@ var StatesField = (0, _createReactClass2['default'])({
 				{ className: 'section-heading' },
 				this.props.label
 			),
-			_react2['default'].createElement(_reactSelect2['default'], { ref: 'stateSelect', autofocus: true, options: options, simpleValue: true, clearable: this.state.clearable, name: 'selected-state', disabled: this.state.disabled, value: this.state.selectValue, onChange: this.updateValue, searchable: this.state.searchable }),
 			_react2['default'].createElement(
 				'div',
 				{ style: { marginTop: 14 } },
@@ -1132,7 +1133,18 @@ var StatesField = (0, _createReactClass2['default'])({
 						'United States'
 					)
 				)
-			)
+			),
+			_react2['default'].createElement(_reactSelect2['default'], {
+				options: [{ value: '_(_', label: '(', type: '_bracket_' }, { value: '_)_', label: ')', type: '_bracket_' }, { value: '_AND_', label: '&&', type: '_operator_' }, { value: '_OR_', label: '||', type: '_operator_' }].concat(options),
+				multi: true,
+				onChange: this.updateValue,
+				value: this.state.selectValue,
+				isOptionUnique: function (e) {
+					return true;
+				}
+			}),
+			_react2['default'].createElement('br', null),
+			_react2['default'].createElement('br', null)
 		);
 	}
 });
@@ -1510,7 +1522,7 @@ module.exports = function() {
 require('whatwg-fetch');
 module.exports = self.fetch.bind(self);
 
-},{"whatwg-fetch":83}],24:[function(require,module,exports){
+},{"whatwg-fetch":82}],24:[function(require,module,exports){
 (function(){
   var crypt = require('crypt'),
       utf8 = require('charenc').utf8,
@@ -1766,9 +1778,9 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 },{}],26:[function(require,module,exports){
 (function (process){
-// Generated by CoffeeScript 1.7.1
+// Generated by CoffeeScript 1.12.2
 (function() {
-  var getNanoSeconds, hrtime, loadTime;
+  var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
 
   if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
     module.exports = function() {
@@ -1776,7 +1788,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
     };
   } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
     module.exports = function() {
-      return (getNanoSeconds() - loadTime) / 1e6;
+      return (getNanoSeconds() - nodeLoadTime) / 1e6;
     };
     hrtime = process.hrtime;
     getNanoSeconds = function() {
@@ -1784,7 +1796,9 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
       hr = hrtime();
       return hr[0] * 1e9 + hr[1];
     };
-    loadTime = getNanoSeconds();
+    moduleLoadTime = getNanoSeconds();
+    upTime = process.uptime() * 1e9;
+    nodeLoadTime = moduleLoadTime - upTime;
   } else if (Date.now) {
     module.exports = function() {
       return Date.now() - loadTime;
@@ -1798,6 +1812,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
   }
 
 }).call(this);
+
+
 
 }).call(this,require('_process'))
 },{"_process":27}],27:[function(require,module,exports){
@@ -1971,6 +1987,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -2031,9 +2051,9 @@ function parserForArrayFormat(opts) {
 	switch (opts.arrayFormat) {
 		case 'index':
 			return function (key, value, accumulator) {
-				result = /\[(\d*)]$/.exec(key);
+				result = /\[(\d*)\]$/.exec(key);
 
-				key = key.replace(/\[\d*]$/, '');
+				key = key.replace(/\[\d*\]$/, '');
 
 				if (!result) {
 					accumulator[key] = value;
@@ -2049,12 +2069,14 @@ function parserForArrayFormat(opts) {
 
 		case 'bracket':
 			return function (key, value, accumulator) {
-				result = /(\[])$/.exec(key);
+				result = /(\[\])$/.exec(key);
+				key = key.replace(/\[\]$/, '');
 
-				key = key.replace(/\[]$/, '');
-
-				if (!result || accumulator[key] === undefined) {
+				if (!result) {
 					accumulator[key] = value;
+					return;
+				} else if (accumulator[key] === undefined) {
+					accumulator[key] = [value];
 					return;
 				}
 
@@ -2187,7 +2209,7 @@ exports.stringify = function (obj, opts) {
 	}).join('&') : '';
 };
 
-},{"object-assign":25,"strict-uri-encode":82}],29:[function(require,module,exports){
+},{"object-assign":25,"strict-uri-encode":81}],29:[function(require,module,exports){
 (function (global){
 var now = require('performance-now')
   , root = typeof window === 'undefined' ? global : window
@@ -2264,8 +2286,36 @@ module.exports.polyfill = function() {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"performance-now":26}],30:[function(require,module,exports){
-module.exports = require('react/lib/shallowCompare');
-},{"react/lib/shallowCompare":81}],31:[function(require,module,exports){
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule shallowCompare
+ */
+
+'use strict';
+
+var shallowEqual = require('fbjs/lib/shallowEqual');
+
+/**
+ * Does a shallow comparison for props and state.
+ * See ReactComponentWithPureRenderMixin
+ * See also https://facebook.github.io/react/docs/shallow-compare.html
+ */
+function shallowCompare(instance, nextProps, nextState) {
+  return (
+    !shallowEqual(instance.props, nextProps) ||
+    !shallowEqual(instance.state, nextState)
+  );
+}
+
+module.exports = shallowCompare;
+
+},{"fbjs/lib/shallowEqual":20}],31:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -2288,6 +2338,10 @@ var _isRetina = require('is-retina');
 
 var _isRetina2 = _interopRequireDefault(_isRetina);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -2304,7 +2358,7 @@ var Gravatar = function (_React$Component) {
   function Gravatar() {
     _classCallCheck(this, Gravatar);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Gravatar).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Gravatar.__proto__ || Object.getPrototypeOf(Gravatar)).apply(this, arguments));
   }
 
   _createClass(Gravatar, [{
@@ -2394,14 +2448,14 @@ var Gravatar = function (_React$Component) {
 
 Gravatar.displayName = 'Gravatar';
 Gravatar.propTypes = {
-  email: _react2.default.PropTypes.string,
-  md5: _react2.default.PropTypes.string,
-  size: _react2.default.PropTypes.number,
-  rating: _react2.default.PropTypes.string,
-  default: _react2.default.PropTypes.string,
-  className: _react2.default.PropTypes.string,
-  protocol: _react2.default.PropTypes.string,
-  style: _react2.default.PropTypes.object
+  email: _propTypes2.default.string,
+  md5: _propTypes2.default.string,
+  size: _propTypes2.default.number,
+  rating: _propTypes2.default.string,
+  default: _propTypes2.default.string,
+  className: _propTypes2.default.string,
+  protocol: _propTypes2.default.string,
+  style: _propTypes2.default.object
 };
 Gravatar.defaultProps = {
   size: 50,
@@ -2412,7 +2466,7 @@ Gravatar.defaultProps = {
 
 
 module.exports = Gravatar;
-},{"is-retina":22,"md5":24,"query-string":28,"react":undefined}],32:[function(require,module,exports){
+},{"is-retina":22,"md5":24,"prop-types":undefined,"query-string":28,"react":undefined}],32:[function(require,module,exports){
 module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -9477,31 +9531,6 @@ module.exports = {
   removeResizeListener: removeResizeListener
 };
 },{}],81:[function(require,module,exports){
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-'use strict';
-
-var shallowEqual = require('fbjs/lib/shallowEqual');
-
-/**
- * Does a shallow comparison for props and state.
- * See ReactComponentWithPureRenderMixin
- * See also https://facebook.github.io/react/docs/shallow-compare.html
- */
-function shallowCompare(instance, nextProps, nextState) {
-  return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
-}
-
-module.exports = shallowCompare;
-},{"fbjs/lib/shallowEqual":20}],82:[function(require,module,exports){
 'use strict';
 module.exports = function (str) {
 	return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
@@ -9509,7 +9538,7 @@ module.exports = function (str) {
 	});
 };
 
-},{}],83:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function(self) {
   'use strict';
 
@@ -9596,7 +9625,10 @@ module.exports = function (str) {
       headers.forEach(function(value, name) {
         this.append(name, value)
       }, this)
-
+    } else if (Array.isArray(headers)) {
+      headers.forEach(function(header) {
+        this.append(header[0], header[1])
+      }, this)
     } else if (headers) {
       Object.getOwnPropertyNames(headers).forEach(function(name) {
         this.append(name, headers[name])

@@ -309,6 +309,22 @@
   margin-top: 5px;
   vertical-align: top;
 }
+.Select--multi .Select-value-bracket {
+  background-color: white;
+  border-color: white;
+  font-weight: bold;
+  color: #00d500;
+}
+.Select--multi .Select-value-operator {
+  text-transform: uppercase;
+  background-color: white;
+  border-color: white;
+  font-weight: bold;
+  color: red;
+}
+.Select--multi .Select-option .hidden-option {
+  display: none;
+}
 .Select--multi .Select-value-icon,
 .Select--multi .Select-value-label {
   display: inline-block;
@@ -391,7 +407,7 @@ a:hover {
 .container {
   margin-left: auto;
   margin-right: auto;
-  max-width: 400px;
+  max-width: 900px;
   padding: 0 30px;
 }
 h1,

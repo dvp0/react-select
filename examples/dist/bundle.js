@@ -886,14 +886,30 @@ var Value = (0, _createReactClass2['default'])({
 		);
 	},
 
+	shouldShowRemoveIcon: function shouldShowRemoveIcon() {
+		if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
+			return false;
+		}
+		return true;
+	},
+
+	getCustomClass: function getCustomClass() {
+		var type = this.props.value.type;
+		if (type && type === '_bracket_') {
+			return "Select-value-bracket";
+		} else if (type && type === '_operator_') {
+			return "Select-value-operator";
+		}
+	},
+
 	render: function render() {
 		return _react2['default'].createElement(
 			'div',
-			{ className: (0, _classnames2['default'])('Select-value', this.props.value.className),
+			{ className: (0, _classnames2['default'])('Select-value', this.props.value.className, this.getCustomClass()),
 				style: this.props.value.style,
 				title: this.props.value.title
 			},
-			this.renderRemoveIcon(),
+			this.shouldShowRemoveIcon() && this.renderRemoveIcon(),
 			this.renderLabel()
 		);
 	}
@@ -2099,9 +2115,20 @@ var Select = (0, _createReactClass2['default'])({
 		);
 	},
 
-	filterOptions: function filterOptions(excludeOptions) {
+	filterOptions: function filterOptions(excludeOptionsPassed) {
 		var filterValue = this.state.inputValue;
 		var options = this.props.options || [];
+
+		var excludeOptions = (excludeOptionsPassed || []).reduce(function (final, val) {
+			return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+		}, []);
+
+		(options || []).forEach(function (val, index) {
+			if (['_bracket_', '_operator_'].includes(val.type)) {
+				val.className = 'hidden-option';
+			}
+		});
+
 		if (this.props.filterOptions) {
 			// Maintain backwards compatibility with boolean attribute
 			var filterOptions = typeof this.props.filterOptions === 'function' ? this.props.filterOptions : _utilsDefaultFilterOptions2['default'];
@@ -2238,7 +2265,7 @@ var Select = (0, _createReactClass2['default'])({
 
 		var valueArray = this.getValueArray(this.props.value);
 		var options = this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
-		var isOpen = this.state.isOpen;
+		var isOpen = true || this.state.isOpen;
 		if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
 		var focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
 

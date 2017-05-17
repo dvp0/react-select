@@ -929,9 +929,20 @@ const Select = createClass({
 		);
 	},
 
-	filterOptions (excludeOptions) {
+	filterOptions (excludeOptionsPassed) {
 		var filterValue = this.state.inputValue;
 		var options = this.props.options || [];
+
+		var excludeOptions = (excludeOptionsPassed || []).reduce(function (final, val) {
+			return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+		}, []);
+
+		(options || []).forEach(function (val, index) {
+            if (['_bracket_', '_operator_'].includes(val.type)) {
+            	val.className = 'hidden-option';
+			}
+        });
+
 		if (this.props.filterOptions) {
 			// Maintain backwards compatibility with boolean attribute
 			const filterOptions = typeof this.props.filterOptions === 'function'
@@ -1061,7 +1072,7 @@ const Select = createClass({
 	render () {
 		let valueArray = this.getValueArray(this.props.value);
 		let options = this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
-		let isOpen = this.state.isOpen;
+		let isOpen = true || this.state.isOpen;
 		if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
 		const focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
 

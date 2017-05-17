@@ -34,12 +34,6 @@ var CreatableDemo = createClass({
 		return (
 			<div className="section">
 				<h3 className="section-heading">{this.props.label}</h3>
-				<Select.Creatable
-					multi={multi}
-					options={options}
-					onChange={this.handleOnChange}
-					value={multi ? multiValue : value}
-				/>
 				<div className="hint">{this.props.hint}</div>
 				<div className="checkbox-list">
 					<label className="checkbox">
@@ -61,6 +55,14 @@ var CreatableDemo = createClass({
 						<span className="checkbox-label">Single Value</span>
 					</label>
 				</div>
+
+				<Select.Creatable
+					multi={multi}
+					options={options}
+					onChange={this.handleOnChange}
+					value={multi ? multiValue : value}
+				/>
+
 			</div>
 		);
 	}
