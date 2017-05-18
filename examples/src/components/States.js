@@ -5,6 +5,10 @@ import Select from 'react-select';
 
 const STATES = require('../data/states');
 
+const testData = require('../utils/testdata.json');
+const selectValueData = require('../utils/selectValueData.json');
+const queryParser = require('../utils/queryParser');
+
 var StatesField = createClass({
 	displayName: 'StatesField',
 	propTypes: {
@@ -24,6 +28,7 @@ var StatesField = createClass({
 			searchable: this.props.searchable,
 			selectValue: 'new-south-wales',
 			clearable: true,
+			tests: testData.tests
 		};
 	},
 	switchCountry (e) {
@@ -35,9 +40,14 @@ var StatesField = createClass({
 		});
 	},
 	updateValue (newValue) {
-		console.log('State changed to ' + newValue);
+	    const tests = queryParser(newValue, testData.tests);
+	    console.log((Object.keys(tests).reduce(function (accum, each) {
+	    	return !!tests[each] ? accum.concat([each]) : accum;
+		}, [])).join(', '));
 		this.setState({
-			selectValue: newValue
+			selectValue: newValue,
+			passingTests: tests
+			// tests: tests ||
 		});
 	},
 	focusStateSelect () {
@@ -49,7 +59,8 @@ var StatesField = createClass({
 		this.setState(newState);
 	},
 	render () {
-		var options = STATES[this.state.country];
+		var options = selectValueData;
+
 		return (
 			<div className="section">
 				<h3 className="section-heading">{this.props.label}</h3>
@@ -95,6 +106,9 @@ var StatesField = createClass({
 				/>
 
 				<br/>
+				{this.state.tests.map(function (each) {
+					return (<div>{each.title}</div>);
+				})}
 				<br/>
 
 			</div>
