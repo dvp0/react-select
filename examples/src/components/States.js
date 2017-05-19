@@ -93,16 +93,12 @@ var StatesField = createClass({
 
 
 				<Select
-					options={[
-                        {value: '_(_', label: '(', type: '_bracket_'},
-                        {value: '_)_', label: ')', type: '_bracket_'},
-                        {value: '_AND_', label: '&&', type: '_operator_'},
-                        {value: '_OR_', label: '||', type: '_operator_'}
-                    ].concat(options)}
+					options={options}
 					multi
 					onChange={this.updateValue}
 					value={this.state.selectValue}
 					isOptionUnique={e => true}
+					advancedMode
 				/>
 
 				<br/>

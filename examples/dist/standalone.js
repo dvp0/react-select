@@ -919,6 +919,7 @@ var Select = (0, _createReactClass2['default'])({
 		escapeClearsValue: _propTypes2['default'].bool, // whether escape clears the value when the menu is closed
 		filterOption: _propTypes2['default'].func, // method to filter a single option (option, filterString)
 		filterOptions: _propTypes2['default'].any, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
+		advancedMode: _propTypes2['default'].bool, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
 		ignoreAccents: _propTypes2['default'].bool, // whether to strip diacritics when filtering
 		ignoreCase: _propTypes2['default'].bool, // whether to perform case-insensitive filtering
 		inputProps: _propTypes2['default'].object, // custom attributes for the Input
@@ -988,6 +989,7 @@ var Select = (0, _createReactClass2['default'])({
 			disabled: false,
 			escapeClearsValue: true,
 			filterOptions: _utilsDefaultFilterOptions2['default'],
+			advancedMode: false,
 			ignoreAccents: true,
 			ignoreCase: true,
 			inputProps: {},
@@ -1698,7 +1700,8 @@ var Select = (0, _createReactClass2['default'])({
 						key: 'value-' + i + '-' + value[_this4.props.valueKey],
 						onClick: onClick,
 						onRemove: _this4.removeValue,
-						value: value
+						value: value,
+						isAdvancedModeOn: _this4.isAdvancedModeOn(valueArray)
 					},
 					renderLabel(value, i),
 					_react2['default'].createElement(
@@ -1823,12 +1826,30 @@ var Select = (0, _createReactClass2['default'])({
 		);
 	},
 
+	isAdvancedModeOn: function isAdvancedModeOn(values) {
+		return this.props.advancedMode && values.length > 0 && values[0]['type'] === '_equal_';
+	},
+
 	filterOptions: function filterOptions(excludeOptionsPassed) {
 		var filterValue = this.state.inputValue;
 		var options = this.props.options || [];
+		var advancedMode = this.props.advancedMode;
+		var isAdvancedModeOn = this.isAdvancedModeOn(excludeOptionsPassed);
+
+		if (advancedMode) {
+			options = [{ value: '_=_', label: '=', type: '_equal_' }].concat(options);
+		}
+
+		if (isAdvancedModeOn) {
+			options = [{ value: '_(_', label: '(', type: '_bracket_' }, { value: '_)_', label: ')', type: '_bracket_' }, { value: '_AND_', label: '&&', type: '_operator_' }, { value: '_OR_', label: '| |', type: '_operator_' }].concat(options);
+		}
 
 		var excludeOptions = (excludeOptionsPassed || []).reduce(function (final, val) {
-			return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+			if (isAdvancedModeOn) {
+				return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+			} else {
+				return final.concat([val]);
+			}
 		}, []);
 
 		(options || []).forEach(function (val, index) {
@@ -2079,9 +2100,10 @@ var Value = (0, _createReactClass2['default'])({
 		id: _propTypes2['default'].string, // Unique id for the value - used for aria
 		onClick: _propTypes2['default'].func, // method to handle click on value label
 		onRemove: _propTypes2['default'].func, // method to handle removal of the value
-		value: _propTypes2['default'].object.isRequired },
+		value: _propTypes2['default'].object.isRequired, // the option object for this value
+		isAdvancedModeOn: _propTypes2['default'].bool.isRequired
+	},
 
-	// the option object for this value
 	handleMouseDown: function handleMouseDown(event) {
 		if (event.type === 'mousedown' && event.button !== 0) {
 			return;
@@ -2149,18 +2171,30 @@ var Value = (0, _createReactClass2['default'])({
 	},
 
 	shouldShowRemoveIcon: function shouldShowRemoveIcon() {
-		if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
-			return false;
-		}
-		return true;
+		// if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
+		// 	return false;
+		// }
+		return !this.props.isAdvancedModeOn;
 	},
 
 	getCustomClass: function getCustomClass() {
 		var type = this.props.value.type;
-		if (type && type === '_bracket_') {
-			return "Select-value-bracket";
-		} else if (type && type === '_operator_') {
-			return "Select-value-operator";
+
+		switch (type) {
+			case '_bracket_':
+				return "Select-value-bracket";
+				break;
+
+			case '_operator_':
+				return "Select-value-operator";
+				break;
+
+			case '_equal_':
+				return "Select-value-equal";
+				break;
+
+			default:
+				return "";
 		}
 	},
 

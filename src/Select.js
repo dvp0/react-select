@@ -68,6 +68,7 @@ const Select = createClass({
 		escapeClearsValue: PropTypes.bool,    // whether escape clears the value when the menu is closed
 		filterOption: PropTypes.func,         // method to filter a single option (option, filterString)
 		filterOptions: PropTypes.any,         // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
+		advancedMode: PropTypes.bool,         // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
 		ignoreAccents: PropTypes.bool,        // whether to strip diacritics when filtering
 		ignoreCase: PropTypes.bool,           // whether to perform case-insensitive filtering
 		inputProps: PropTypes.object,         // custom attributes for the Input
@@ -137,6 +138,7 @@ const Select = createClass({
 			disabled: false,
 			escapeClearsValue: true,
 			filterOptions: defaultFilterOptions,
+            advancedMode: false,
 			ignoreAccents: true,
 			ignoreCase: true,
 			inputProps: {},
@@ -808,6 +810,7 @@ const Select = createClass({
 						onClick={onClick}
 						onRemove={this.removeValue}
 						value={value}
+						isAdvancedModeOn={this.isAdvancedModeOn(valueArray)}
 					>
 						{renderLabel(value, i)}
 						<span className="Select-aria-only">&nbsp;</span>
@@ -929,12 +932,35 @@ const Select = createClass({
 		);
 	},
 
+    isAdvancedModeOn (values) {
+        return this.props.advancedMode && values.length > 0 && values[0]['type'] === '_equal_';
+    },
+
 	filterOptions (excludeOptionsPassed) {
 		var filterValue = this.state.inputValue;
-		var options = this.props.options || [];
+		var options = (this.props.options || []);
+		var advancedMode = this.props.advancedMode;
+		var isAdvancedModeOn = this.isAdvancedModeOn(excludeOptionsPassed);
+
+		if (advancedMode) {
+            options = [{value: '_=_', label: '=', type: '_equal_'}].concat(options);
+		}
+
+		if (isAdvancedModeOn) {
+            options = [
+                {value: '_(_', label: '(', type: '_bracket_'},
+                {value: '_)_', label: ')', type: '_bracket_'},
+                {value: '_AND_', label: '&&', type: '_operator_'},
+                {value: '_OR_', label: '| |', type: '_operator_'}
+			].concat(options);
+		}
 
 		var excludeOptions = (excludeOptionsPassed || []).reduce(function (final, val) {
-			return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+			if (isAdvancedModeOn) {
+				return final.concat(['_bracket_', '_operator_'].includes(val.type) ? [] : [val]);
+			} else {
+				return final.concat([val]);
+			}
 		}, []);
 
 		(options || []).forEach(function (val, index) {

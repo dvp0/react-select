@@ -1,100 +1,17 @@
-//( address-failure AND canceled-buyer-pass-on-offer ) OR balance-due OR ( canceled-fraud OR canceled-HVPD ) OR canceled-outdibbed
-
-// var tags = [
-//     {
-//         //0
-//         "value": "_(_",
-//         "label": "(",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //1
-//         "value": "address-failure",
-//         "label": "address-failure"
-//     }, {
-//         //2
-//         "value": "_AND_",
-//         "label": "AND",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//
-//         //3
-//         "value": "canceled-buyer-pass-on-offer",
-//         "label": "canceled-buyer-pass-on-offer"
-//     }, {
-//         //4
-//         "value": "_)_",
-//         "label": ")",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //5
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//
-//         //6
-//         "value": "balance-due",
-//         "label": "balance-due"
-//     }, {
-//         //7
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //8
-//         "value": "_(_",
-//         "label": "(",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //9
-//         "value": "canceled-fraud",
-//         "label": "canceled-fraud"
-//     }, {
-//         //10
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //11
-//         "value": "canceled-HVPD",
-//         "label": "canceled-HVPD"
-//     }, {
-//         //12
-//         "value": "_)_",
-//         "label": ")",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //13
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //14
-//         "value": "canceled-outdibbed",
-//         "label": "canceled-outdibbed"
-//     }];
-
 var operatorsMap = {
     "_OR_": "||",
     "_AND_": "&&"
 };
 
-
-var check = function (collection, tests) {
+var check = function (passedCollection, tests) {
     var operatorsMapIndexWise = {};
     var brackets = 0;
     var subSets = [];
     var subSetStart = 0;
     var subSetEnd = 0;
+    var firstElementIsEqual = passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_";
+    var collectionClone = passedCollection.slice(0);
+    var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
     var createSubset = function () {
         if (subSetStart <= subSetEnd) {
             subSets.push({
@@ -106,7 +23,7 @@ var check = function (collection, tests) {
     };
 
     // (one && two) || three
-    // 0-4 6-6
+    // 1-3 6-6
     // one && two
     // 0-0 2-2
 
@@ -148,10 +65,21 @@ var check = function (collection, tests) {
             createSubset();
         }
 
+        if (subSets.length === 1 && collection.length > 1) {
+            subSets = collection.reduce(function (accum, val, index) {
+                return accum.concat([{start: index, end: index}]);
+            }, []);
+        }
+
     });
 
 
     if (subSets.length === 1 && collection.length <= 2) {
+
+        // BASE-CASE
+        // if only actual tag/element to compare to, which might have pre-post bracket/operator so get the actual value
+        // and return map of 0-x tests true/false
+
         var properValue = collection.find(function (each) {
             return each.type !== '_bracket_';
         });
@@ -162,7 +90,9 @@ var check = function (collection, tests) {
         }, {});
 
         return result;
+
     } else {
+
         var initialResultSet = {};
 
         tests.forEach(function (each, index) {
@@ -171,7 +101,8 @@ var check = function (collection, tests) {
 
         var result = subSets.reduce(function (resultSet, eachSubSet) {
             var cloneCollection = collection.slice();
-            var subCollection = cloneCollection.splice(eachSubSet.start, eachSubSet.start === eachSubSet.end ? 1 : eachSubSet.end - eachSubSet.start + 1);
+            var spliceEnd = eachSubSet.start === eachSubSet.end ? 1 : eachSubSet.end - eachSubSet.start + 1;
+            var subCollection = cloneCollection.splice(eachSubSet.start, spliceEnd);
             var subChecked = check(subCollection, tests);
             var nestedResult = {};
 

@@ -314,6 +314,13 @@
   border-color: white;
   font-weight: bold;
   color: #00d500;
+  padding: 0px;
+}
+.Select--multi .Select-value-equal {
+  background-color: white;
+  border-color: white;
+  font-weight: bold;
+  color: blue;
 }
 .Select--multi .Select-value-operator {
   text-transform: uppercase;
@@ -321,6 +328,7 @@
   border-color: white;
   font-weight: bold;
   color: red;
+  padding: 0px;
 }
 .Select--multi .Select-option .hidden-option {
   display: none;

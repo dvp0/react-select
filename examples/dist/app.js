@@ -1058,7 +1058,8 @@ var StatesField = (0, _createReactClass2['default'])({
 			return !!tests[each] ? accum.concat([each]) : accum;
 		}, []).join(', '));
 		this.setState({
-			selectValue: newValue
+			selectValue: newValue,
+			passingTests: tests
 			// tests: tests ||
 		});
 	},
@@ -1145,13 +1146,14 @@ var StatesField = (0, _createReactClass2['default'])({
 				)
 			),
 			_react2['default'].createElement(_reactSelect2['default'], {
-				options: [{ value: '_(_', label: '(', type: '_bracket_' }, { value: '_)_', label: ')', type: '_bracket_' }, { value: '_AND_', label: '&&', type: '_operator_' }, { value: '_OR_', label: '||', type: '_operator_' }].concat(options),
+				options: options,
 				multi: true,
 				onChange: this.updateValue,
 				value: this.state.selectValue,
 				isOptionUnique: function (e) {
 					return true;
-				}
+				},
+				advancedMode: true
 			}),
 			_react2['default'].createElement('br', null),
 			this.state.tests.map(function (each) {
@@ -1264,91 +1266,6 @@ exports.US = [{ value: 'AL', label: 'Alabama', disabled: true }, { value: 'AK', 
 module.exports = [{ value: 'John Smith', label: 'John Smith', email: 'john@smith.com' }, { value: 'Merry Jane', label: 'Merry Jane', email: 'merry@jane.com' }, { value: 'Stan Hoper', label: 'Stan Hoper', email: 'stan@hoper.com' }];
 
 },{}],16:[function(require,module,exports){
-//( address-failure AND canceled-buyer-pass-on-offer ) OR balance-due OR ( canceled-fraud OR canceled-HVPD ) OR canceled-outdibbed
-
-// var tags = [
-//     {
-//         //0
-//         "value": "_(_",
-//         "label": "(",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //1
-//         "value": "address-failure",
-//         "label": "address-failure"
-//     }, {
-//         //2
-//         "value": "_AND_",
-//         "label": "AND",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//
-//         //3
-//         "value": "canceled-buyer-pass-on-offer",
-//         "label": "canceled-buyer-pass-on-offer"
-//     }, {
-//         //4
-//         "value": "_)_",
-//         "label": ")",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //5
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//
-//         //6
-//         "value": "balance-due",
-//         "label": "balance-due"
-//     }, {
-//         //7
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //8
-//         "value": "_(_",
-//         "label": "(",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //9
-//         "value": "canceled-fraud",
-//         "label": "canceled-fraud"
-//     }, {
-//         //10
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //11
-//         "value": "canceled-HVPD",
-//         "label": "canceled-HVPD"
-//     }, {
-//         //12
-//         "value": "_)_",
-//         "label": ")",
-//         "type": "_bracket_",
-//         "className": "hidden-option"
-//     }, {
-//         //13
-//         "value": "_OR_",
-//         "label": "OR",
-//         "type": "_operator_",
-//         "className": "hidden-option"
-//     }, {
-//         //14
-//         "value": "canceled-outdibbed",
-//         "label": "canceled-outdibbed"
-//     }];
-
 "use strict";
 
 var operatorsMap = {
@@ -1356,12 +1273,15 @@ var operatorsMap = {
     "_AND_": "&&"
 };
 
-var check = function check(collection, tests) {
+var check = function check(passedCollection, tests) {
     var operatorsMapIndexWise = {};
     var brackets = 0;
     var subSets = [];
     var subSetStart = 0;
     var subSetEnd = 0;
+    var firstElementIsEqual = passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_";
+    var collectionClone = passedCollection.slice(0);
+    var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
     var createSubset = function createSubset() {
         if (subSetStart <= subSetEnd) {
             subSets.push({
@@ -1373,7 +1293,7 @@ var check = function check(collection, tests) {
     };
 
     // (one && two) || three
-    // 0-4 6-6
+    // 1-3 6-6
     // one && two
     // 0-0 2-2
 
@@ -1411,9 +1331,20 @@ var check = function check(collection, tests) {
             subSetEnd = index;
             createSubset();
         }
+
+        if (subSets.length === 1 && collection.length > 1) {
+            subSets = collection.reduce(function (accum, val, index) {
+                return accum.concat([{ start: index, end: index }]);
+            }, []);
+        }
     });
 
     if (subSets.length === 1 && collection.length <= 2) {
+
+        // BASE-CASE
+        // if only actual tag/element to compare to, which might have pre-post bracket/operator so get the actual value
+        // and return map of 0-x tests true/false
+
         var properValue = collection.find(function (each) {
             return each.type !== '_bracket_';
         });
@@ -1425,6 +1356,7 @@ var check = function check(collection, tests) {
 
         return result;
     } else {
+
         var initialResultSet = {};
 
         tests.forEach(function (each, index) {
@@ -1433,7 +1365,8 @@ var check = function check(collection, tests) {
 
         var result = subSets.reduce(function (resultSet, eachSubSet) {
             var cloneCollection = collection.slice();
-            var subCollection = cloneCollection.splice(eachSubSet.start, eachSubSet.start === eachSubSet.end ? 1 : eachSubSet.end - eachSubSet.start + 1);
+            var spliceEnd = eachSubSet.start === eachSubSet.end ? 1 : eachSubSet.end - eachSubSet.start + 1;
+            var subCollection = cloneCollection.splice(eachSubSet.start, spliceEnd);
             var subChecked = check(subCollection, tests);
             var nestedResult = {};
 

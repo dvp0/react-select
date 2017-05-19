@@ -14,6 +14,7 @@ const Value = createClass({
 		onClick: PropTypes.func,                // method to handle click on value label
 		onRemove: PropTypes.func,               // method to handle removal of the value
 		value: PropTypes.object.isRequired,     // the option object for this value
+        isAdvancedModeOn: PropTypes.bool.isRequired
 	},
 
 	handleMouseDown (event) {
@@ -83,18 +84,30 @@ const Value = createClass({
 	},
 
 	shouldShowRemoveIcon () {
-		if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
-			return false;
-		}
-		return true;
+		// if (this.props.value.type && ["_bracket_", "_operator_"].includes(this.props.value.type)) {
+		// 	return false;
+		// }
+		return !this.props.isAdvancedModeOn;
 	},
 
     getCustomClass () {
 		const type = this.props.value.type;
-		if (type && type === '_bracket_') {
-			return "Select-value-bracket";
-		} else if (type && type === '_operator_') {
-            return "Select-value-operator";
+
+        switch (type) {
+            case '_bracket_':
+                return "Select-value-bracket";
+                break;
+
+            case '_operator_':
+                return "Select-value-operator";
+                break;
+
+            case '_equal_':
+                return "Select-value-equal";
+                break;
+
+			default:
+				return "";
         }
 	},
 
