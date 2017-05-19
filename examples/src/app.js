@@ -28,12 +28,12 @@ ReactDOM.render(
 		{/*<BooleanSelect label="Boolean Values" />*/}
 		{/*<CustomRender label="Custom Render Methods"/>*/}
 		{/*<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />*/}
-		<div style={{float: "right"}}>
-			<Creatable
-				hint="Enter a value that's NOT in the list, then hit return"
-				label="Custom tag creation"
-			/>
-		</div>
+		{/*<div style={{float: "right"}}>*/}
+			{/*<Creatable*/}
+				{/*hint="Enter a value that's NOT in the list, then hit return"*/}
+				{/*label="Custom tag creation"*/}
+			{/*/>*/}
+		{/*</div>*/}
 		<div style={{clear: "both"}}></div>
 	</div>,
 	document.getElementById('example')

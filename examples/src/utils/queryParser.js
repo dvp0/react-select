@@ -9,9 +9,8 @@ var check = function (passedCollection, tests) {
     var subSets = [];
     var subSetStart = 0;
     var subSetEnd = 0;
-    var firstElementIsEqual = passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_";
-    var collectionClone = passedCollection.slice(0);
-    var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
+    var collection = Array.from(passedCollection);
+    // var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
     var createSubset = function () {
         if (subSetStart <= subSetEnd) {
             subSets.push({
@@ -21,6 +20,10 @@ var check = function (passedCollection, tests) {
         }
         subSetStart = subSetEnd + 1;
     };
+
+    if (passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_") {
+        collection.splice(0, 1);
+    }
 
     // (one && two) || three
     // 1-3 6-6
@@ -65,11 +68,11 @@ var check = function (passedCollection, tests) {
             createSubset();
         }
 
-        if (subSets.length === 1 && collection.length > 1) {
-            subSets = collection.reduce(function (accum, val, index) {
-                return accum.concat([{start: index, end: index}]);
-            }, []);
-        }
+        // if (subSets.length === 1 && collection.length > 1) {
+        //     subSets = collection.reduce(function (accum, val, index) {
+        //         return accum.concat([{start: index, end: index}]);
+        //     }, []);
+        // }
 
     });
 
@@ -81,7 +84,7 @@ var check = function (passedCollection, tests) {
         // and return map of 0-x tests true/false
 
         var properValue = collection.find(function (each) {
-            return each.type !== '_bracket_';
+            return !(['_bracket_', '_operator_', '_equal_'].includes(each.type));
         });
 
         var result = tests.reduce(function (accum, each, index) {

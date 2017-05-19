@@ -28,7 +28,11 @@ var StatesField = createClass({
 			searchable: this.props.searchable,
 			selectValue: 'new-south-wales',
 			clearable: true,
-			tests: testData.tests
+			tests: testData.tests,
+            passingTests: Object.keys(testData.tests).reduce((accum, val, index) => {
+                accum[index] = true;
+                return accum;
+            }, {})
 		};
 	},
 	switchCountry (e) {
@@ -60,37 +64,10 @@ var StatesField = createClass({
 	},
 	render () {
 		var options = selectValueData;
+		var passingTests = this.state.passingTests;
 
 		return (
 			<div className="section">
-				<h3 className="section-heading">{this.props.label}</h3>
-
-				<div style={{ marginTop: 14 }}>
-					<button type="button" onClick={this.focusStateSelect}>Focus Select</button>
-					<label className="checkbox" style={{ marginLeft: 10 }}>
-						<input type="checkbox" className="checkbox-control" name="searchable" checked={this.state.searchable} onChange={this.toggleCheckbox}/>
-						<span className="checkbox-label">Searchable</span>
-					</label>
-					<label className="checkbox" style={{ marginLeft: 10 }}>
-						<input type="checkbox" className="checkbox-control" name="disabled" checked={this.state.disabled} onChange={this.toggleCheckbox}/>
-						<span className="checkbox-label">Disabled</span>
-					</label>
-					<label className="checkbox" style={{ marginLeft: 10 }}>
-						<input type="checkbox" className="checkbox-control" name="clearable" checked={this.state.clearable} onChange={this.toggleCheckbox}/>
-						<span className="checkbox-label">Clearable</span>
-					</label>
-				</div>
-				<div className="checkbox-list">
-					<label className="checkbox">
-						<input type="radio" className="checkbox-control" checked={this.state.country === 'AU'} value="AU" onChange={this.switchCountry}/>
-						<span className="checkbox-label">Australia</span>
-					</label>
-					<label className="checkbox">
-						<input type="radio" className="checkbox-control" checked={this.state.country === 'US'} value="US" onChange={this.switchCountry}/>
-						<span className="checkbox-label">United States</span>
-					</label>
-				</div>
-
 
 				<Select
 					options={options}
@@ -102,9 +79,14 @@ var StatesField = createClass({
 				/>
 
 				<br/>
-				{this.state.tests.map(function (each) {
-					return (<div>{each.title}</div>);
+
+				{this.state.tests.map(function (each, index) {
+					if (passingTests[index + 1]) {
+						return (<div>{each.title}</div>);
+					}
+
 				})}
+
 				<br/>
 
 			</div>

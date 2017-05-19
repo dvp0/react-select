@@ -36,34 +36,6 @@
 		vertical-align: top;
 	}
 
-	.Select-value-bracket {
-		background-color: white;
-		border-color: white;
-		font-weight: bold;
-		color: #00d500;
-		padding: 0px;
-	}
-
-	.Select-value-equal {
-		background-color: white;
-		border-color: white;
-		font-weight: bold;
-		color: blue;
-	}
-
-	.Select-value-operator {
-		text-transform: uppercase;
-		background-color: white;
-		border-color: white;
-		font-weight: bold;
-		color: red;
-		padding: 0px;
-	}
-
-	.Select-option .hidden-option {
-		display: none;
-	}
-
 	// common
 	.Select-value-icon,
 	.Select-value-label {
@@ -107,6 +79,43 @@
 			background-color: @select-item-border-color-fb;  /* Fallback color for IE 8 */
 			background-color: @select-item-border-color;
 		}
+	}
+
+}
+
+.Select--multi {
+
+	&.has-advanced-mode-on {
+		box-shadow: 0px 1px 10px #0090ff;
+		border-radius: @select-input-border-radius;
+	}
+
+	.Select-value-bracket {
+		background-color: white;
+		border-color: white;
+		font-weight: bold;
+		color: #00d500;
+		padding: 0px;
+	}
+
+	.Select-value-equal {
+		background-color: white;
+		border-color: white;
+		font-weight: bold;
+		color: blue;
+	}
+
+	.Select-value-operator {
+		text-transform: uppercase;
+		background-color: white;
+		border-color: white;
+		font-weight: bold;
+		color: red;
+		padding: 0px;
+	}
+
+	.Select-option.hidden-option {
+		display: none;
 	}
 
 }

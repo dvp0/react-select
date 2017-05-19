@@ -951,7 +951,7 @@ const Select = createClass({
                 {value: '_(_', label: '(', type: '_bracket_'},
                 {value: '_)_', label: ')', type: '_bracket_'},
                 {value: '_AND_', label: '&&', type: '_operator_'},
-                {value: '_OR_', label: '| |', type: '_operator_'}
+                {value: '_OR_', label: '||', type: '_operator_'}
 			].concat(options);
 		}
 
@@ -1098,7 +1098,7 @@ const Select = createClass({
 	render () {
 		let valueArray = this.getValueArray(this.props.value);
 		let options = this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
-		let isOpen = true || this.state.isOpen;
+		let isOpen = this.state.isOpen;
 		if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
 		const focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
 
@@ -1119,6 +1119,7 @@ const Select = createClass({
 			'is-pseudo-focused': this.state.isPseudoFocused,
 			'is-searchable': this.props.searchable,
 			'has-value': valueArray.length,
+			'has-advanced-mode-on': this.isAdvancedModeOn(valueArray)
 		});
 
 		let removeMessage = null;

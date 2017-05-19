@@ -65,17 +65,9 @@ _reactDom2['default'].render(_react2['default'].createElement(
 		{ style: { float: "left" } },
 		_react2['default'].createElement(_componentsStates2['default'], { label: 'States', searchable: true })
 	),
-	_react2['default'].createElement(
-		'div',
-		{ style: { float: "right" } },
-		_react2['default'].createElement(_componentsCreatable2['default'], {
-			hint: 'Enter a value that\'s NOT in the list, then hit return',
-			label: 'Custom tag creation'
-		})
-	),
 	_react2['default'].createElement('div', { style: { clear: "both" } })
 ), document.getElementById('example'));
-/*<Multiselect label="Multiselect" />*/ /*<Virtualized label="Virtualized" />*/ /*<Contributors label="Contributors (Async)" />*/ /*<GithubUsers label="Github users (Async with fetch.js)" />*/ /*<NumericSelect label="Numeric Values" />*/ /*<BooleanSelect label="Boolean Values" />*/ /*<CustomRender label="Custom Render Methods"/>*/ /*<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />*/
+/*<Multiselect label="Multiselect" />*/ /*<Virtualized label="Virtualized" />*/ /*<Contributors label="Contributors (Async)" />*/ /*<GithubUsers label="Github users (Async with fetch.js)" />*/ /*<NumericSelect label="Numeric Values" />*/ /*<BooleanSelect label="Boolean Values" />*/ /*<CustomRender label="Custom Render Methods"/>*/ /*<CustomComponents label="Custom Placeholder, Option, Value, and Arrow Components" />*/ /*<div style={{float: "right"}}>*/ /*<Creatable*/ /*hint="Enter a value that's NOT in the list, then hit return"*/ /*label="Custom tag creation"*/ /*/>*/ /*</div>*/
 
 },{"./components/BooleanSelect":2,"./components/Contributors":3,"./components/Creatable":4,"./components/CustomComponents":5,"./components/CustomRender":6,"./components/GithubUsers":7,"./components/Multiselect":8,"./components/NumericSelect":9,"./components/States":10,"./components/Virtualized":11,"react":undefined,"react-dom":undefined,"react-select":undefined}],2:[function(require,module,exports){
 'use strict';
@@ -1041,7 +1033,11 @@ var StatesField = (0, _createReactClass2['default'])({
 			searchable: this.props.searchable,
 			selectValue: 'new-south-wales',
 			clearable: true,
-			tests: testData.tests
+			tests: testData.tests,
+			passingTests: Object.keys(testData.tests).reduce(function (accum, val, index) {
+				accum[index] = true;
+				return accum;
+			}, {})
 		};
 	},
 	switchCountry: function switchCountry(e) {
@@ -1073,78 +1069,11 @@ var StatesField = (0, _createReactClass2['default'])({
 	},
 	render: function render() {
 		var options = selectValueData;
+		var passingTests = this.state.passingTests;
 
 		return _react2['default'].createElement(
 			'div',
 			{ className: 'section' },
-			_react2['default'].createElement(
-				'h3',
-				{ className: 'section-heading' },
-				this.props.label
-			),
-			_react2['default'].createElement(
-				'div',
-				{ style: { marginTop: 14 } },
-				_react2['default'].createElement(
-					'button',
-					{ type: 'button', onClick: this.focusStateSelect },
-					'Focus Select'
-				),
-				_react2['default'].createElement(
-					'label',
-					{ className: 'checkbox', style: { marginLeft: 10 } },
-					_react2['default'].createElement('input', { type: 'checkbox', className: 'checkbox-control', name: 'searchable', checked: this.state.searchable, onChange: this.toggleCheckbox }),
-					_react2['default'].createElement(
-						'span',
-						{ className: 'checkbox-label' },
-						'Searchable'
-					)
-				),
-				_react2['default'].createElement(
-					'label',
-					{ className: 'checkbox', style: { marginLeft: 10 } },
-					_react2['default'].createElement('input', { type: 'checkbox', className: 'checkbox-control', name: 'disabled', checked: this.state.disabled, onChange: this.toggleCheckbox }),
-					_react2['default'].createElement(
-						'span',
-						{ className: 'checkbox-label' },
-						'Disabled'
-					)
-				),
-				_react2['default'].createElement(
-					'label',
-					{ className: 'checkbox', style: { marginLeft: 10 } },
-					_react2['default'].createElement('input', { type: 'checkbox', className: 'checkbox-control', name: 'clearable', checked: this.state.clearable, onChange: this.toggleCheckbox }),
-					_react2['default'].createElement(
-						'span',
-						{ className: 'checkbox-label' },
-						'Clearable'
-					)
-				)
-			),
-			_react2['default'].createElement(
-				'div',
-				{ className: 'checkbox-list' },
-				_react2['default'].createElement(
-					'label',
-					{ className: 'checkbox' },
-					_react2['default'].createElement('input', { type: 'radio', className: 'checkbox-control', checked: this.state.country === 'AU', value: 'AU', onChange: this.switchCountry }),
-					_react2['default'].createElement(
-						'span',
-						{ className: 'checkbox-label' },
-						'Australia'
-					)
-				),
-				_react2['default'].createElement(
-					'label',
-					{ className: 'checkbox' },
-					_react2['default'].createElement('input', { type: 'radio', className: 'checkbox-control', checked: this.state.country === 'US', value: 'US', onChange: this.switchCountry }),
-					_react2['default'].createElement(
-						'span',
-						{ className: 'checkbox-label' },
-						'United States'
-					)
-				)
-			),
 			_react2['default'].createElement(_reactSelect2['default'], {
 				options: options,
 				multi: true,
@@ -1156,12 +1085,14 @@ var StatesField = (0, _createReactClass2['default'])({
 				advancedMode: true
 			}),
 			_react2['default'].createElement('br', null),
-			this.state.tests.map(function (each) {
-				return _react2['default'].createElement(
-					'div',
-					null,
-					each.title
-				);
+			this.state.tests.map(function (each, index) {
+				if (passingTests[index + 1]) {
+					return _react2['default'].createElement(
+						'div',
+						null,
+						each.title
+					);
+				}
 			}),
 			_react2['default'].createElement('br', null)
 		);
@@ -1279,9 +1210,8 @@ var check = function check(passedCollection, tests) {
     var subSets = [];
     var subSetStart = 0;
     var subSetEnd = 0;
-    var firstElementIsEqual = passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_";
-    var collectionClone = passedCollection.slice(0);
-    var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
+    var collection = Array.from(passedCollection);
+    // var collection = firstElementIsEqual ? collectionClone.splice(0, 1) : collectionClone;
     var createSubset = function createSubset() {
         if (subSetStart <= subSetEnd) {
             subSets.push({
@@ -1291,6 +1221,10 @@ var check = function check(passedCollection, tests) {
         }
         subSetStart = subSetEnd + 1;
     };
+
+    if (passedCollection.length > 0 && passedCollection[0]['type'] === "_equal_") {
+        collection.splice(0, 1);
+    }
 
     // (one && two) || three
     // 1-3 6-6
@@ -1332,11 +1266,11 @@ var check = function check(passedCollection, tests) {
             createSubset();
         }
 
-        if (subSets.length === 1 && collection.length > 1) {
-            subSets = collection.reduce(function (accum, val, index) {
-                return accum.concat([{ start: index, end: index }]);
-            }, []);
-        }
+        // if (subSets.length === 1 && collection.length > 1) {
+        //     subSets = collection.reduce(function (accum, val, index) {
+        //         return accum.concat([{start: index, end: index}]);
+        //     }, []);
+        // }
     });
 
     if (subSets.length === 1 && collection.length <= 2) {
@@ -1346,7 +1280,7 @@ var check = function check(passedCollection, tests) {
         // and return map of 0-x tests true/false
 
         var properValue = collection.find(function (each) {
-            return each.type !== '_bracket_';
+            return !['_bracket_', '_operator_', '_equal_'].includes(each.type);
         });
 
         var result = tests.reduce(function (accum, each, index) {
