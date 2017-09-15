@@ -79,11 +79,6 @@
 
 .Select--multi {
 
-	&.has-advanced-mode-on {
-		box-shadow: 0px 1px 10px #0090ff;
-		border-radius: $select-input-border-radius;
-	}
-
 	.Select-value-bracket {
 		background-color: white;
 		border-color: white;

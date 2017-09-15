@@ -46,7 +46,8 @@
 
 .Select-control {
 	background-color: @select-input-bg;
-	border-color: lighten(@select-input-border-color, 5%) @select-input-border-color darken(@select-input-border-color, 10%);
+	//border-color: lighten(@select-input-border-color, 5%) @select-input-border-color darken(@select-input-border-color, 10%);
+	border-color: transparent;
 	border-radius: @select-input-border-radius;
 	border: @select-input-border-width solid @select-input-border-color;
 	color: @select-text-color;
@@ -96,6 +97,10 @@
 
 .is-focused:not(.is-open) > .Select-control {
 	.Select-focus-state(@select-input-border-focus);
+}
+
+.has-advanced-mode-on > .Select-control {
+	border-color: @select-input-border-focus;
 }
 
 // placeholder
