@@ -939,10 +939,10 @@ const Select = createClass({
 	filterOptions (excludeOptionsPassed) {
 		var filterValue = this.state.inputValue;
 		var options = (this.props.options || []);
-		var advancedMode = this.props.advancedMode;
+		var advancedModeEnabled = this.props.advancedMode;
 		var isAdvancedModeOn = this.isAdvancedModeOn(excludeOptionsPassed);
 
-		if (advancedMode) {
+		if (advancedModeEnabled && !excludeOptionsPassed.length) {
             options = [{value: '_=_', label: '=', type: '_equal_'}].concat(options);
 		}
 
