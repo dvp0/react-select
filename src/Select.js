@@ -75,6 +75,7 @@ const Select = createClass({
 		inputRenderer: PropTypes.func,        // returns a custom input component
 		instanceId: PropTypes.string,         // set the components instanceId
 		isLoading: PropTypes.bool,            // whether the Select is loading externally or not (such as options being loaded)
+        isOpen: PropTypes.bool,            // sljfalskdf
 		joinValues: PropTypes.bool,           // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: PropTypes.string,           // path of the label value in option objects
 		matchPos: PropTypes.string,           // (any|start) match the start or entire string when filtering
@@ -195,12 +196,19 @@ const Select = createClass({
 
 	componentWillReceiveProps (nextProps) {
 		const valueArray = this.getValueArray(nextProps.value, nextProps);
+		const newState = {};
 
-		if (nextProps.required) {
-			this.setState({
-				required: this.handleRequired(valueArray[0], nextProps.multi),
+		if (nextProps.isOpen) {
+			Object.assign(newState, {
+                isOpen: true,
+                isFocused: true
 			});
 		}
+
+		if (nextProps.required) {
+			newState.required = this.handleRequired(valueArray[0], nextProps.multi)
+		}
+		this.setState(newState);
 	},
 
 	componentWillUpdate (nextProps, nextState) {
@@ -213,8 +221,10 @@ const Select = createClass({
 
 	componentDidUpdate (prevProps, prevState) {
 		// focus to the selected option
-		if (this.menu && this.focused && this.state.isOpen && !this.hasScrolledToOption) {
-			let focusedOptionNode = ReactDOM.findDOMNode(this.focused);
+		const isFocused = this.focused;
+
+		if (this.menu && isFocused && this.state.isOpen && !this.hasScrolledToOption) {
+			let focusedOptionNode = ReactDOM.findDOMNode(isFocused);
 			let menuNode = ReactDOM.findDOMNode(this.menu);
 			menuNode.scrollTop = focusedOptionNode.offsetTop;
 			this.hasScrolledToOption = true;
@@ -222,9 +232,9 @@ const Select = createClass({
 			this.hasScrolledToOption = false;
 		}
 
-		if (this._scrollToFocusedOptionOnUpdate && this.focused && this.menu) {
+		if (this._scrollToFocusedOptionOnUpdate && isFocused && this.menu) {
 			this._scrollToFocusedOptionOnUpdate = false;
-			var focusedDOM = ReactDOM.findDOMNode(this.focused);
+			var focusedDOM = ReactDOM.findDOMNode(isFocused);
 			var menuDOM = ReactDOM.findDOMNode(this.menu);
 			var focusedRect = focusedDOM.getBoundingClientRect();
 			var menuRect = menuDOM.getBoundingClientRect();
@@ -241,6 +251,10 @@ const Select = createClass({
 		if (prevProps.disabled !== this.props.disabled) {
 			this.setState({ isFocused: false }); // eslint-disable-line react/no-did-update-set-state
 			this.closeMenu();
+		}
+
+		if (this.state.isFocused) {
+			this.focus();
 		}
 	},
 
